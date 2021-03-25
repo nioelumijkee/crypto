@@ -10,27 +10,69 @@
     (SEED) = (SEED)*1103515245; \
     (SEED) += 12345;
 
+static unsigned int seed;
+
+
+// -------------------------------------------------------------------------- //
+// init random seed
+void random_init()
+{
+  seed = time(NULL);
+}
+
+// set random seed
+void random_set(unsigned int i)
+{
+  seed = i;
+}
+
 // -------------------------------------------------------------------------- //
 // caesar
 // encoder
-static char * encoder_caesar(char c, char *str, int len)
+static char * encoder_caesar(char a, char *str, int len)
 {
   int i=0;
   while (i < len)
     {
-      str[i] = str[i] + c;
+      str[i] = str[i] + a;
       i++;
     }
   return (str);
 }
 
 // decoder
-static char * decoder_caesar(char c, char *str, int len)
+static char * decoder_caesar(char a, char *str, int len)
 {    
   int i=0;
   while (i < len)
     {
-      str[i] = str[i] - c;
+      str[i] = str[i] - a;
+      i++;
+    }
+  return (str);
+}
+
+// -------------------------------------------------------------------------- //
+// affine
+// encoder
+static char * encoder_affine(char a, char b, char *str, int len)
+{
+  int i=0;
+  while (i < len)
+    {
+      str[i] = str[i] + (i*a) + b;
+      i++;
+    }
+  return (str);
+}
+
+// decoder
+static char * decoder_affine(char a, char b, char *str, int len)
+{    
+  int i=0;
+  while (i < len)
+    {
+      str[i] = str[i] - (i*a) - b;
       i++;
     }
   return (str);
@@ -41,7 +83,6 @@ static char * decoder_caesar(char c, char *str, int len)
 // gen
 void gen_couple(char *key, char *key_inv)
 {
-  unsigned int seed = time(NULL);
   int i,j,k;
   int find;
   i=0;

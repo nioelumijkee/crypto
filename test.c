@@ -8,7 +8,8 @@
 #define MAXSTR 1024
 
 #define CAESAR 1
-#define COUPLE 2
+#define AFFINE 2
+#define COUPLE 3
 
 // -------------------------------------------------------------------------- //
 int main(int ac, char **av)
@@ -35,6 +36,10 @@ int main(int ac, char **av)
       if      (strcmp("-caesar", av[1]) == 0)
 	{
 	  alg = CAESAR;
+	}
+      else if (strcmp("-affine", av[1]) == 0)
+	{
+	  alg = AFFINE;
 	}
       else if (strcmp("-couple", av[1]) == 0)
 	{
@@ -91,12 +96,25 @@ int main(int ac, char **av)
   printf("%s\n", str);
 
   // body
+
+  // ramdom
+  random_init();
+
   if (alg == CAESAR)
     {
       buf = encoder_caesar(3, str, len-1);
       printf("=================\n");
       printf("%s\n",buf);
       buf = decoder_caesar(3, buf, len-1);
+      printf("=================\n");
+      printf("%s\n",buf);
+    }
+  else if (alg == AFFINE)
+    {
+      buf = encoder_affine(2, 144, str, len-1);
+      printf("=================\n");
+      printf("%s\n",buf);
+      buf = decoder_affine(2, 144, buf, len-1);
       printf("=================\n");
       printf("%s\n",buf);
     }
