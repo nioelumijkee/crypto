@@ -84,48 +84,6 @@ static char * decoder_affine(char a, char b, char *str, int len)
 }
 
 // -------------------------------------------------------------------------- //
-// swap
-// encoder
-static char * encoder_swap(unsigned int a, 
-			   unsigned int b,
-			   unsigned int step,
-			   char *str, 
-			   unsigned int len)
-{
-  unsigned int j,k;
-  unsigned int i=0;
-  char buf;
-  while (i < step)
-    {
-      j = ((i*a)+b) % len;
-      k = i % len;
-      AF_SWAP(str[k], str[j], buf);
-      i++;
-    }
-  return (str);
-}
-
-// decoder
-static char * decoder_swap(unsigned int a, 
-			   unsigned int b,
-			   unsigned int step,
-			   char *str, 
-			   unsigned int len)
-{    
-  unsigned int j,k;
-  int i=step-1;
-  char buf;
-  while (i >= 0)
-    {
-      j = ((i*a)+b) % len;
-      k = i % len;
-      AF_SWAP(str[k], str[j], buf);
-      i--;
-    }
-  return (str);
-}
-
-// -------------------------------------------------------------------------- //
 // couple
 // gen
 void gen_couple(char *key, char *key_inv)
@@ -178,3 +136,118 @@ static char * decoder_couple(char *key_inv, char *str, int len)
 }
 
 
+// -------------------------------------------------------------------------- //
+// swap
+// encoder
+static char * encoder_swap(unsigned int a, 
+			   unsigned int b,
+			   unsigned int step,
+			   char *str, 
+			   unsigned int len)
+{
+  unsigned int j,k;
+  unsigned int i=0;
+  char buf;
+  while (i < step)
+    {
+      j = ((i*a)+b) % len;
+      k = i % len;
+      AF_SWAP(str[k], str[j], buf);
+      i++;
+    }
+  return (str);
+}
+
+// decoder
+static char * decoder_swap(unsigned int a, 
+			   unsigned int b,
+			   unsigned int step,
+			   char *str, 
+			   unsigned int len)
+{    
+  unsigned int j,k;
+  int i=step-1;
+  char buf;
+  while (i >= 0)
+    {
+      j = ((i*a)+b) % len;
+      k = i % len;
+      AF_SWAP(str[k], str[j], buf);
+      i--;
+    }
+  return (str);
+}
+
+// -------------------------------------------------------------------------- //
+// bits
+// gen
+void gen_bits(char *key, int len)
+{
+  int i;
+  for (i=0; i<len; i++)
+    {
+      AF_RANDOM(seed);
+      key[i] = seed;
+    }
+}
+
+// encoder
+static char * encoder_bits(int len_key, 
+			   int len_str, 
+			   char *key, 
+			   char *str)
+{
+  int i,j,k;
+  unsigned char res_hi;
+  unsigned char res_lo;
+  unsigned char buf;
+  for (i=0; i<len_str; i++)
+    {
+      j = i % len_key;
+      k = (unsigned char)key[j] % 8;
+      buf = str[i];
+      if (k == 0)
+	{
+	  buf = ~buf;
+	}
+      else
+	{
+	  res_hi = buf >> k;
+	  res_lo = buf << (8 - k);
+	  buf = res_hi | res_lo;
+	}
+      str[i] = buf;
+    }
+  return (str);
+}
+
+
+// decoder
+static char * decoder_bits(int len_key,
+			   int len_str, 
+			   char *key,
+			   char *str)
+{
+  int i,j,k;
+  unsigned char res_hi;
+  unsigned char res_lo;
+  unsigned char buf;
+  for (i=0; i<len_str; i++)
+    {
+      j = i % len_key;
+      k = (unsigned char)key[j] % 8;
+      buf = str[i];
+      if (k == 0)
+	{
+	  buf = ~buf;
+	}
+      else
+	{
+	  res_hi = buf << k;
+	  res_lo = buf >> (8 - k);
+	  buf = res_hi | res_lo;
+	}
+      str[i] = buf;
+    }
+  return (str);
+}
