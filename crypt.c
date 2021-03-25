@@ -5,10 +5,15 @@
 #include <time.h>
 
 
-// random
 #define AF_RANDOM(SEED)         \
-    (SEED) = (SEED)*1103515245; \
-    (SEED) += 12345;
+  (SEED) = (SEED)*1103515245;	\
+  (SEED) += 12345;
+
+#define AF_SWAP(X,Y,B)				\
+  (B) = (X);					\
+  (X) = (Y);					\
+  (Y) = (B);
+
 
 static unsigned int seed;
 
@@ -74,6 +79,48 @@ static char * decoder_affine(char a, char b, char *str, int len)
     {
       str[i] = str[i] - (i*a) - b;
       i++;
+    }
+  return (str);
+}
+
+// -------------------------------------------------------------------------- //
+// swap
+// encoder
+static char * encoder_swap(unsigned int a, 
+			   unsigned int b,
+			   unsigned int step,
+			   char *str, 
+			   unsigned int len)
+{
+  unsigned int j,k;
+  unsigned int i=0;
+  char buf;
+  while (i < step)
+    {
+      j = ((i*a)+b) % len;
+      k = i % len;
+      AF_SWAP(str[k], str[j], buf);
+      i++;
+    }
+  return (str);
+}
+
+// decoder
+static char * decoder_swap(unsigned int a, 
+			   unsigned int b,
+			   unsigned int step,
+			   char *str, 
+			   unsigned int len)
+{    
+  unsigned int j,k;
+  int i=step-1;
+  char buf;
+  while (i >= 0)
+    {
+      j = ((i*a)+b) % len;
+      k = i % len;
+      AF_SWAP(str[k], str[j], buf);
+      i--;
     }
   return (str);
 }

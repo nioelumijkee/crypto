@@ -6,10 +6,12 @@
 #include "crypt.c"
 
 #define MAXSTR 1024
+#define MAXSTR_2 2048
 
 #define CAESAR 1
 #define AFFINE 2
 #define COUPLE 3
+#define SWAP 4
 
 // -------------------------------------------------------------------------- //
 int main(int ac, char **av)
@@ -19,7 +21,7 @@ int main(int ac, char **av)
   int alg;
   int err;
 
-  char str[MAXSTR];
+  char str[MAXSTR_2];
   char key0[MAXSTR];
   char key1[MAXSTR];
   char *buf;
@@ -44,6 +46,10 @@ int main(int ac, char **av)
       else if (strcmp("-couple", av[1]) == 0)
 	{
 	  alg = COUPLE;
+	}
+      else if (strcmp("-swap", av[1]) == 0)
+	{
+	  alg = SWAP;
 	}
       else
 	{
@@ -129,6 +135,15 @@ int main(int ac, char **av)
       printf("=================\n");
       printf("%s\n",buf);
       buf = decoder_couple(key1, buf, len-1);
+      printf("=================\n");
+      printf("%s\n",buf);
+    }
+  else if (alg == SWAP)
+    {
+      buf = encoder_swap(2, 144, len*4, str, len-1);
+      printf("=================\n");
+      printf("%s\n",buf);
+      buf = decoder_swap(2, 144, len*4, buf, len-1);
       printf("=================\n");
       printf("%s\n",buf);
     }
