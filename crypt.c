@@ -174,7 +174,7 @@ void encoder_bits(char *data,
   for (i=0; i<len_data; i++)
     {
       j = i % len_key;
-      k = key[j] % 8;
+      k = (unsigned char)key[j] % 8;
       buf = data[i];
       if (k == 0)
 	{
@@ -204,7 +204,7 @@ void decoder_bits(char *data,
   for (i=0; i<len_data; i++)
     {
       j = i % len_key;
-      k = key[j] % 8;
+      k = (unsigned char)key[j] % 8;
       buf = data[i];
       if (k == 0)
 	{
