@@ -1,10 +1,7 @@
-/* 
- * crypto examples
- */
-
 #include <time.h>
 
 
+// -------------------------------------------------------------------------- //
 #define AF_RANDOM(SEED)         \
   (SEED) = (SEED)*1103515245;	\
   (SEED) += 12345;
@@ -17,76 +14,66 @@
 
 static unsigned int seed;
 
-
 // -------------------------------------------------------------------------- //
-// init random seed
+// random
 void random_init()
 {
   seed = time(NULL);
 }
 
-// set random seed
-void random_set(unsigned int i)
+void random_set(int i)
 {
   seed = i;
 }
 
 // -------------------------------------------------------------------------- //
 // caesar
-// encoder
-static char * encoder_caesar(char a, char *str, int len)
+void encoder_caesar(char *data, int a, int len)
 {
   int i=0;
   while (i < len)
     {
-      str[i] = str[i] + a;
+      data[i] = data[i] + a;
       i++;
     }
-  return (str);
 }
 
-// decoder
-static char * decoder_caesar(char a, char *str, int len)
+void decoder_caesar(char *data, int a, int len)
 {    
   int i=0;
   while (i < len)
     {
-      str[i] = str[i] - a;
+      data[i] = data[i] - a;
       i++;
     }
-  return (str);
 }
 
 // -------------------------------------------------------------------------- //
 // affine
-// encoder
-static char * encoder_affine(char a, char b, char *str, int len)
+void encoder_affine(char *data, int a, int b, int len)
 {
   int i=0;
   while (i < len)
     {
-      str[i] = str[i] + (i*a) + b;
+      data[i] = data[i] + (i*a) + b;
       i++;
     }
-  return (str);
 }
 
-// decoder
-static char * decoder_affine(char a, char b, char *str, int len)
-{    
+void decoder_affine(char *data, int a, int b, int len)
+{
   int i=0;
   while (i < len)
     {
-      str[i] = str[i] - (i*a) - b;
+      data[i] = data[i] - (i*a) - b;
       i++;
     }
-  return (str);
 }
 
 // -------------------------------------------------------------------------- //
 // couple
-// gen
-void gen_couple(char *key, char *key_inv)
+void gen_couple(char *key,     // 256 
+		char *key_inv) // 256
 {
   int i,j,k;
   int find;
@@ -113,74 +100,57 @@ void gen_couple(char *key, char *key_inv)
     }
 }
 
-// encoder
-static char * encoder_couple(char *key, char *str, int len)
+void deencoder_couple(char *data, 
+		      char *key, // 256 
+		      int len)
 {
   int i;
   for(i=0; i<len; i++)
     {
-      str[i] = key[(int)(unsigned char)str[i]];
+      data[i] = key[(int)(unsigned char)data[i]];
     }
-  return (str);
 }
-
-// decoder
-static char * decoder_couple(char *key_inv, char *str, int len)
-{    
-  int i;
-  for(i=0; i<len; i++)
-    {
-      str[i] = key_inv[(int)(unsigned char)str[i]];
-    }
-  return (str);
-}
-
 
 // -------------------------------------------------------------------------- //
 // swap
-// encoder
-static char * encoder_swap(unsigned int a, 
-			   unsigned int b,
-			   unsigned int step,
-			   char *str, 
-			   unsigned int len)
+void encoder_swap(char *data,
+		  int a, // only positive
+		  int b,
+		  int step,
+		  int len)
 {
-  unsigned int j,k;
-  unsigned int i=0;
+  int i,j;
   char buf;
+  i = 0;
   while (i < step)
     {
-      j = ((i*a)+b) % len;
-      k = i % len;
-      AF_SWAP(str[k], str[j], buf);
+      j = (unsigned int)((i*a)+b);
+      j = j % len;
+      AF_SWAP(data[i], data[j], buf);
       i++;
     }
-  return (str);
 }
 
-// decoder
-static char * decoder_swap(unsigned int a, 
-			   unsigned int b,
-			   unsigned int step,
-			   char *str, 
-			   unsigned int len)
-{    
-  unsigned int j,k;
-  int i=step-1;
+void decoder_swap(char *data,
+		  int a, // only positive
+		  int b,
+		  int step,
+		  int len)
+{
+  int i,j;
   char buf;
+  i = step-1;
   while (i >= 0)
     {
-      j = ((i*a)+b) % len;
-      k = i % len;
-      AF_SWAP(str[k], str[j], buf);
+      j = (unsigned int)((i*a)+b);
+      j = j % len;
+      AF_SWAP(data[i], data[j], buf);
       i--;
     }
-  return (str);
 }
 
 // -------------------------------------------------------------------------- //
 // bits
-// gen
 void gen_bits(char *key, int len)
 {
   int i;
@@ -191,21 +161,21 @@ void gen_bits(char *key, int len)
     }
 }
 
-// encoder
-static char * encoder_bits(int len_key, 
-			   int len_str, 
-			   char *key, 
-			   char *str)
+void encoder_bits(char *data,
+		  char *key,
+		  int len_data,
+		  int len_key)
 {
-  int i,j,k;
+  int i,j;
+  unsigned char k;
   unsigned char res_hi;
   unsigned char res_lo;
   unsigned char buf;
-  for (i=0; i<len_str; i++)
+  for (i=0; i<len_data; i++)
     {
       j = i % len_key;
-      k = (unsigned char)key[j] % 8;
-      buf = str[i];
+      k = key[j] % 8;
+      buf = data[i];
       if (k == 0)
 	{
 	  buf = ~buf;
@@ -216,27 +186,26 @@ static char * encoder_bits(int len_key,
 	  res_lo = buf << (8 - k);
 	  buf = res_hi | res_lo;
 	}
-      str[i] = buf;
+      data[i] = buf;
     }
-  return (str);
 }
 
 
-// decoder
-static char * decoder_bits(int len_key,
-			   int len_str, 
-			   char *key,
-			   char *str)
+void decoder_bits(char *data,
+		  char *key,
+		  int len_data,
+		  int len_key)
 {
-  int i,j,k;
+  int i,j;
+  unsigned char k;
   unsigned char res_hi;
   unsigned char res_lo;
   unsigned char buf;
-  for (i=0; i<len_str; i++)
+  for (i=0; i<len_data; i++)
     {
       j = i % len_key;
-      k = (unsigned char)key[j] % 8;
-      buf = str[i];
+      k = key[j] % 8;
+      buf = data[i];
       if (k == 0)
 	{
 	  buf = ~buf;
@@ -247,7 +216,127 @@ static char * decoder_bits(int len_key,
 	  res_lo = buf >> (8 - k);
 	  buf = res_hi | res_lo;
 	}
-      str[i] = buf;
+      data[i] = buf;
     }
-  return (str);
 }
+
+/* // -------------------------------------------------------------------------- // */
+/* // polybius */
+/* // gen key */
+/* void gen_key_polybius(char *key, char *key_inv) */
+/* { */
+/*   int i,j,k; */
+/*   int find; */
+/*   i=0; */
+/*   while (i < 256) */
+/*     { */
+/*       AF_RANDOM(seed); */
+/*       j = seed % 256; */
+/*       find = 0; */
+/*       for (k=0; k<i; k++) */
+/* 	{ */
+/* 	  if (key[k] == j) */
+/* 	    { */
+/* 	      find = 1; */
+/* 	      k=i; */
+/* 	    } */
+/* 	} */
+/*       if (find == 0) */
+/* 	{ */
+/* 	  key[i] = j; */
+/* 	  key_inv[j] = i; */
+/* 	  i++; */
+/* 	} */
+/*     } */
+/* } */
+
+/* // gen word                 16 */
+/* void gen_word_polybius(char *word) */
+/* { */
+/*   int i,j,k; */
+/*   int find; */
+/*   i=0; */
+/*   while (i < 16) */
+/*     { */
+/*       AF_RANDOM(seed); */
+/*       j = seed % 256; */
+/*       find = 0; */
+/*       for (k=0; k<i; k++) */
+/* 	{ */
+/* 	  if (word[k] == j) */
+/* 	    { */
+/* 	      find = 1; */
+/* 	      k=i; */
+/* 	    } */
+/* 	} */
+/*       if (find == 0) */
+/* 	{ */
+/* 	  word[i] = j; */
+/* 	  i++; */
+/* 	} */
+/*     } */
+/* } */
+
+/* // encoder  */
+/* static char * encoder_polybius(int len, */
+/* 			       char *wordx, // 16 */
+/* 			       char *wordy, // 16 */
+/* 			       char *key, // 256 */
+/* 			       char *key_inv, // 256 */
+/* 			       char *input, //  */
+/* 			       char *output) // length must be twice as long input */
+/* { */
+/*   int i,j,x,y; */
+/*   for (i=0, j=0; i<len; i++, j += 2) */
+/*     { */
+/*       x = input[i]; */
+/*       x = key_inv[x]; // pos */
+/*       y = x / 16; */
+/*       x = x % 16; */
+/*       output[j]   = wordx[x]; */
+/*       output[j+1] = wordy[y]; */
+/*     } */
+/*   return (output); */
+/* } */
+
+
+/* // decoder */
+/* static char * decoder_polybius(int len, */
+/* 			       char *wordx, // 16 */
+/* 			       char *wordy, // 16 */
+/* 			       char *key, // 256 */
+/* 			       char *key_inv, // 256 */
+/* 			       char *input, //  */
+/* 			       char *output) // / 2 */
+/* { */
+/*   int i,j,k,x,y; */
+/*   for (i=0, j=0; i<len; i++, j += 2) */
+/*     { */
+/*       x = input[j]; */
+/*       y = input[j+1]; */
+
+/*       // find */
+/*       for (k=0; k<16; k++) */
+/* 	{ */
+/* 	  if (x == wordx[k]) */
+/* 	    { */
+/* 	      break; */
+/* 	    } */
+/* 	} */
+/*       x = k; */
+
+/*       // find */
+/*       for (k=0; k<16; k++) */
+/* 	{ */
+/* 	  if (y == wordy[k]) */
+/* 	    { */
+/* 	      break; */
+/* 	    } */
+/* 	} */
+/*       x = x + (y * 16); */
+
+/*       output[i]   = key_inv[x]; */
+/*     } */
+/*   return (output); */
+/* } */
+
