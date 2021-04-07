@@ -30,14 +30,19 @@ int main(int ac, char **av)
   int arg; /* count arguments */
   int a,b,c; /* parametrs */
 
-  char data[MAXSTR];
+  char data[MAXSTR_2];
+  char buf[MAXSTR_2];
+  char key[MAXSTR];
+  char key_inv[MAXSTR];
+  char wordx[MAXSTR];
+  char wordy[MAXSTR];
 
   // arg -------------------------------------------------------------- //
   err = 0;
   alg = CAESAR;
   arg = 1;
 
-  if (ac < 2) 
+  if (ac < 3) 
     {
       err = 1;
     }
@@ -113,6 +118,20 @@ int main(int ac, char **av)
 
       else if (strcmp("-polybius", av[arg]) == 0)
 	{
+	  alg = POLYBIUS;
+	  if (ac < 5)
+	    {
+	      err = 1;
+	    }
+	  else
+	    {
+	      arg++;
+	      strncpy(wordx, av[arg], 17);
+	      wordx[16] = '\0';
+	      arg++;
+	      strncpy(wordy, av[arg], 17);
+	      wordy[16] = '\0';
+	    }
 	}
 
       else
@@ -144,13 +163,13 @@ int main(int ac, char **av)
   if (err == 1)
     {
       printf("usage:\n");
-      printf("     alg:      par:         \n");
-      printf("    -caesar    a      <data>\n");
-      printf("    -affine    a b    <data>\n");
-      printf("    -couple           <data>\n");
-      printf("    -swap      a b c  <data>\n");
-      printf("    -bits      a      <data>\n");
-      printf("    -polybius\n");
+      printf("     alg:      par:          .... \n");
+      printf("    -caesar    a            <data>\n");
+      printf("    -affine    a b          <data>\n");
+      printf("    -couple                 <data>\n");
+      printf("    -swap      a b c        <data>\n");
+      printf("    -bits      a            <data>\n");
+      printf("    -polybius  wordx wordy  <data>\n");
       return(1);
     }
 
@@ -158,8 +177,6 @@ int main(int ac, char **av)
   // ramdom
   random_init();
 
-  char key[MAXSTR];
-  char key_inv[MAXSTR];
 
   // alg -------------------------------------------------------------- //
   switch (alg)
@@ -264,28 +281,33 @@ int main(int ac, char **av)
       }
       break;
  
-    /* case POLYBIUS: */
-    /*   gen_key_polybius(key0, key1); */
-    /*   printf("=================\n"); */
-    /*   printf("%s\n",key0); */
-    /*   printf("=================\n"); */
-    /*   printf("%s\n",key1); */
-    /*   gen_word_polybius(wordx); */
-    /*   wordx[16] = '\0'; */
-    /*   printf("=================\n"); */
-    /*   printf("%s\n",wordx); */
-    /*   gen_word_polybius(wordy); */
-    /*   wordy[16] = '\0'; */
-    /*   printf("=================\n"); */
-    /*   printf("%s\n",wordy); */
-    /*   buf = encoder_polybius(len-1, wordx, wordy, key0, key1, str, data2); */
-    /*   printf("=================\n"); */
-    /*   printf("%s\n",buf); */
-    /*   buf = decoder_polybius(len-1, wordx, wordy, key0, key1, data2, str); */
-    /*   printf("=================\n"); */
-    /*   printf("%s\n",buf); */
-    /*   break; */
-      
+    case POLYBIUS:
+      {
+	gen_key_polybius(key, key_inv);
+
+	printf("-----------------\n");
+	printf("polybius %s %s\n", wordx, wordy);
+	printf("length = %d\n", len);
+	printf("%s\n", data);
+
+	printf("-----------------\n");
+	printf("key\n");
+	printf("%s\n", key);
+
+	printf("-----------------\n");
+	printf("key inv\n");
+	printf("%s\n", key_inv);
+
+	printf("-----------------\n");
+	encoder_polybius(len, wordx, wordy, key, data, buf);
+	printf("%s\n", buf);
+
+	printf("-----------------\n");
+	decoder_polybius(len, wordx, wordy, key_inv, buf, data);
+	printf("%s\n", data);
+      }
+      break;
+       
     default:
       break;
     }

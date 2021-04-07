@@ -114,37 +114,43 @@ void deencoder_couple(char *data,
 // -------------------------------------------------------------------------- //
 // swap
 void encoder_swap(char *data,
-		  int a, // only positive
-		  int b,
-		  int step,
+		  int a,     // only positive
+		  int b,     // only positive
+		  int step,  // only positive
 		  int len)
 {
-  int i,j;
+  int i,j,k;
   char buf;
+  if (a < 0) a = 0 - a;
+  if (b < 0) b = 0 - b;
+  if (step < 0) step = 0 - step;
   i = 0;
   while (i < step)
     {
-      j = (unsigned int)((i*a)+b);
-      j = j % len;
-      AF_SWAP(data[i], data[j], buf);
+      j = ((unsigned int)((i*a)+b)) % len;
+      k = (unsigned int)i % len;
+      AF_SWAP(data[k], data[j], buf);
       i++;
     }
 }
 
 void decoder_swap(char *data,
-		  int a, // only positive
-		  int b,
-		  int step,
+		  int a,     // only positive
+		  int b,     // only positive
+		  int step,  // only positive
 		  int len)
 {
-  int i,j;
+  int i,j,k;
   char buf;
+  if (a < 0) a = 0 - a;
+  if (b < 0) b = 0 - b;
+  if (step < 0) step = 0 - step;
   i = step-1;
   while (i >= 0)
     {
-      j = (unsigned int)((i*a)+b);
-      j = j % len;
-      AF_SWAP(data[i], data[j], buf);
+      j = ((unsigned int)((i*a)+b)) % len;
+      k = (unsigned int)i % len;
+      AF_SWAP(data[k], data[j], buf);
       i--;
     }
 }
@@ -220,123 +226,118 @@ void decoder_bits(char *data,
     }
 }
 
-/* // -------------------------------------------------------------------------- // */
-/* // polybius */
-/* // gen key */
-/* void gen_key_polybius(char *key, char *key_inv) */
-/* { */
-/*   int i,j,k; */
-/*   int find; */
-/*   i=0; */
-/*   while (i < 256) */
-/*     { */
-/*       AF_RANDOM(seed); */
-/*       j = seed % 256; */
-/*       find = 0; */
-/*       for (k=0; k<i; k++) */
-/* 	{ */
-/* 	  if (key[k] == j) */
-/* 	    { */
-/* 	      find = 1; */
-/* 	      k=i; */
-/* 	    } */
-/* 	} */
-/*       if (find == 0) */
-/* 	{ */
-/* 	  key[i] = j; */
-/* 	  key_inv[j] = i; */
-/* 	  i++; */
-/* 	} */
-/*     } */
-/* } */
+// -------------------------------------------------------------------------- //
+// polybius
+void gen_key_polybius(char *key,     // 256 
+		      char *key_inv) // 256
+{
+  int i,j,k;
+  int find;
+  i=0;
+  while (i < 256)
+    {
+      AF_RANDOM(seed);
+      j = seed % 256;
+      find = 0;
+      for (k=0; k<i; k++)
+	{
+	  if (key[k] == j)
+	    {
+	      find = 1;
+	      k=i;
+	    }
+	}
+      if (find == 0)
+	{
+	  key[i] = j;
+	  key_inv[j] = i;
+	  i++;
+	}
+    }
+}
 
-/* // gen word                 16 */
-/* void gen_word_polybius(char *word) */
-/* { */
-/*   int i,j,k; */
-/*   int find; */
-/*   i=0; */
-/*   while (i < 16) */
-/*     { */
-/*       AF_RANDOM(seed); */
-/*       j = seed % 256; */
-/*       find = 0; */
-/*       for (k=0; k<i; k++) */
-/* 	{ */
-/* 	  if (word[k] == j) */
-/* 	    { */
-/* 	      find = 1; */
-/* 	      k=i; */
-/* 	    } */
-/* 	} */
-/*       if (find == 0) */
-/* 	{ */
-/* 	  word[i] = j; */
-/* 	  i++; */
-/* 	} */
-/*     } */
-/* } */
+void gen_word_polybius(char *word) // 16
+{
+  int i,j,k;
+  int find;
+  i=0;
+  while (i < 16)
+    {
+      AF_RANDOM(seed);
+      j = seed % 256;
+      find = 0;
+      for (k=0; k<i; k++)
+	{
+	  if (word[k] == j)
+	    {
+	      find = 1;
+	      k=i;
+	    }
+	}
+      if (find == 0)
+	{
+	  word[i] = j;
+	  i++;
+	}
+    }
+}
 
-/* // encoder  */
-/* static char * encoder_polybius(int len, */
-/* 			       char *wordx, // 16 */
-/* 			       char *wordy, // 16 */
-/* 			       char *key, // 256 */
-/* 			       char *key_inv, // 256 */
-/* 			       char *input, //  */
-/* 			       char *output) // length must be twice as long input */
-/* { */
-/*   int i,j,x,y; */
-/*   for (i=0, j=0; i<len; i++, j += 2) */
-/*     { */
-/*       x = input[i]; */
-/*       x = key_inv[x]; // pos */
-/*       y = x / 16; */
-/*       x = x % 16; */
-/*       output[j]   = wordx[x]; */
-/*       output[j+1] = wordy[y]; */
-/*     } */
-/*   return (output); */
-/* } */
+void encoder_polybius(int len,
+		      char *wordx,    // 16
+		      char *wordy,    // 16
+		      char *key,      // 256
+		      char *input,    //
+		      char *output)   // input * 2
+{
+  int i,j;
+  unsigned char x,y;
+  for (i=0, j=0; i<len; i++, j += 2)
+    {
+      x = input[i];
+      x = key[x]; // pos
+      y = x / 16;
+      x = x % 16;
+      output[j]   = wordx[x];
+      output[j+1] = wordy[y];
+    }
+}
 
 
-/* // decoder */
-/* static char * decoder_polybius(int len, */
-/* 			       char *wordx, // 16 */
-/* 			       char *wordy, // 16 */
-/* 			       char *key, // 256 */
-/* 			       char *key_inv, // 256 */
-/* 			       char *input, //  */
-/* 			       char *output) // / 2 */
-/* { */
-/*   int i,j,k,x,y; */
-/*   for (i=0, j=0; i<len; i++, j += 2) */
-/*     { */
-/*       x = input[j]; */
-/*       y = input[j+1]; */
+void decoder_polybius(int len,
+		      char *wordx,   // 16
+		      char *wordy,   // 16
+		      char *key_inv, // 256
+		      char *input,   //
+		      char *output)  // input / 2
+{
+  int i,j,k;
+  unsigned char x,y;
+  for (i=0, j=0; i<len; i++, j += 2)
+    {
+      x = input[j];
+      y = input[j+1];
 
-/*       // find */
-/*       for (k=0; k<16; k++) */
-/* 	{ */
-/* 	  if (x == wordx[k]) */
-/* 	    { */
-/* 	      break; */
-/* 	    } */
-/* 	} */
-/*       x = k; */
+      // find
+      for (k=0; k<16; k++)
+	{
+	  if (x == wordx[k])
+	    {
+	      break;
+	    }
+	}
+      x = k;
 
-/*       // find */
-/*       for (k=0; k<16; k++) */
-/* 	{ */
-/* 	  if (y == wordy[k]) */
-/* 	    { */
-/* 	      break; */
-/* 	    } */
-/* 	} */
-/*       x = x + (y * 16); */
+      // find
+      for (k=0; k<16; k++)
+	{
+	  if (y == wordy[k])
+	    {
+	      break;
+	    }
+	}
+      x = x + (k * 16);
 
-/*       output[i]   = key_inv[x]; */
-/*     } */
-/*   return (output); */
-/* } */
+      output[i] = key_inv[x];
+    }
+}
 
