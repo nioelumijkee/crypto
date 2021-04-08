@@ -1,14 +1,14 @@
-/*                        *
- *      test crypto       *
- *                        */
+/*                         *
+ *       test crypto       *
+ *                         */
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "crypt.c"
 
-#define MAXSTR   1024
-#define MAXSTR_2 2048
+#define MAXSTR    1024
+#define MAXSTR2   4096
 
 enum
 {
@@ -17,21 +17,24 @@ enum
   COUPLE,
   SWAP,
   BITS,
-  POLYBIUS
+  POLYBIUS,
+  INSERT_T,
+  INSERT_R,
+  HASH_R
 };
 
 // -------------------------------------------------------------------------- //
 int main(int ac, char **av)
 {
-  int i;
+  int i,j;
   int len; /* length input data */
   int alg; /* algorythm */
   int err; /* error */
   int arg; /* count arguments */
   int a,b,c; /* parametrs */
 
-  char data[MAXSTR_2];
-  char buf[MAXSTR_2];
+  char data[MAXSTR2];
+  char buf[MAXSTR2];
   char key[MAXSTR];
   char key_inv[MAXSTR];
   char wordx[MAXSTR];
@@ -134,6 +137,48 @@ int main(int ac, char **av)
 	    }
 	}
 
+      else if (strcmp("-insert_t", av[arg]) == 0)
+	{
+	  alg = INSERT_T;
+	  if (ac < 4)
+	    {
+	      err = 1;
+	    }
+	  else
+	    {
+	      arg++;
+	      a = atoi(av[arg]);
+	    }
+	}
+
+      else if (strcmp("-insert_r", av[arg]) == 0)
+	{
+	  alg = INSERT_R;
+	  if (ac < 4)
+	    {
+	      err = 1;
+	    }
+	  else
+	    {
+	      arg++;
+	      a = atoi(av[arg]);
+	    }
+	}
+
+      else if (strcmp("-hash_r", av[arg]) == 0)
+	{
+	  alg = HASH_R;
+	  if (ac < 4)
+	    {
+	      err = 1;
+	    }
+	  else
+	    {
+	      arg++;
+	      a = atoi(av[arg]);
+	    }
+	}
+
       else
 	{
 	  err = 1;
@@ -170,6 +215,9 @@ int main(int ac, char **av)
       printf("    -swap      a b c        <data>\n");
       printf("    -bits      a            <data>\n");
       printf("    -polybius  wordx wordy  <data>\n");
+      printf("    -insert_t  a            <data>\n");
+      printf("    -insert_r  a            <data>\n");
+      printf("    -hash_r    len          <data>\n");
       return(1);
     }
 
@@ -308,6 +356,57 @@ int main(int ac, char **av)
       }
       break;
        
+    case INSERT_T:
+      {
+	printf("-----------------\n");
+	printf("insert_t %d\n", a);
+	printf("length = %d\n", len);
+	printf("%s\n", data);
+
+	printf("-----------------\n");
+	j = encoder_insert_this(a, len, data, buf);
+	printf("%d\n", j);
+	printf("%s\n", buf);
+
+	printf("-----------------\n");
+	decoder_insert(a, j, buf, data);
+	printf("%s\n", data);
+      }
+      break;
+
+    case INSERT_R:
+      {
+	printf("-----------------\n");
+	printf("insert_r %d\n", a);
+	printf("length = %d\n", len);
+	printf("%s\n", data);
+
+	printf("-----------------\n");
+	j = encoder_insert_rnd(a, len, data, buf);
+	printf("%d\n", j);
+	printf("%s\n", buf);
+
+	printf("-----------------\n");
+	decoder_insert(a, j, buf, data);
+	printf("%s\n", data);
+      }
+      break;
+
+    case HASH_R:
+      {
+	printf("-----------------\n");
+	printf("hash_r %d\n", a);
+	printf("length = %d\n", len);
+	printf("%s\n", data);
+
+	printf("-----------------\n");
+	hash_r(len, a, data, buf);
+	for(i=0; i<a; i++)
+	  printf("%.2hhX", buf[i]);
+	printf("\n");
+      }
+      break;
+
     default:
       break;
     }
