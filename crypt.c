@@ -378,7 +378,7 @@ int encoder_insert_this(int a,     // 2 >= a
   return(j);
 }
 
-int encoder_insert_rnd(int a,     // 2 >= a 
+int encoder_insert_rnd(int a,        // 1 >= a 
 		       int len,
 		       char *input,
 		       char *output) // max = input * 2
@@ -406,7 +406,7 @@ int encoder_insert_rnd(int a,     // 2 >= a
   return(j);
 }
 
-int decoder_insert(int a,     // 2 >= a 
+int decoder_insert(int a,        // 1 >= a 
 		   int len,
 		   char *input,
 		   char *output) // max = input * 2
@@ -430,6 +430,45 @@ int decoder_insert(int a,     // 2 >= a
       i++;
     }
   return(j);
+}
+
+// -------------------------------------------------------------------------- //
+// vernam
+void gen_vernam(char *key, int len)
+{
+  int i;
+  for (i=0; i<len; i++)
+    {
+      AF_RANDOM(seed);
+      key[i] = seed;
+    }
+}
+
+void encoder_vernam(char *data,
+		    char *key,
+		    int len_data,
+		    int len_key)
+{
+  int i,j;
+  for (i=0; i<len_data; i++)
+    {
+      j = i % len_key;
+      data[i] = data[i] ^ key[j];
+    }
+}
+
+
+void decoder_vernam(char *data,
+		    char *key,
+		    int len_data,
+		    int len_key)
+{
+  int i,j;
+  for (i=0; i<len_data; i++)
+    {
+      j = i % len_key;
+      data[i] = data[i] ^ key[j];
+    }
 }
 
 // -------------------------------------------------------------------------- //

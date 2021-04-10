@@ -20,6 +20,7 @@ enum
   POLYBIUS,
   INSERT_T,
   INSERT_R,
+  VERNAM,
   HASH_R
 };
 
@@ -165,6 +166,21 @@ int main(int ac, char **av)
 	    }
 	}
 
+      else if (strcmp("-vernam", av[arg]) == 0)
+	{
+	  alg = VERNAM;
+	  if (ac < 4)
+	    {
+	      err = 1;
+	    }
+	  else
+	    {
+	      arg++;
+	      a = atoi(av[arg]);
+	      if (a >= MAXSTR) a = MAXSTR;
+	    }
+	}
+
       else if (strcmp("-hash_r", av[arg]) == 0)
 	{
 	  alg = HASH_R;
@@ -217,6 +233,7 @@ int main(int ac, char **av)
       printf("    -polybius  wordx wordy  <data>\n");
       printf("    -insert_t  a            <data>\n");
       printf("    -insert_r  a            <data>\n");
+      printf("    -vernam    a            <data>\n");
       printf("    -hash_r    len          <data>\n");
       return(1);
     }
@@ -388,6 +405,29 @@ int main(int ac, char **av)
 
 	printf("-----------------\n");
 	decoder_insert(a, j, buf, data);
+	printf("%s\n", data);
+      }
+      break;
+
+    case VERNAM:
+      {
+	gen_vernam(key, a);
+
+	printf("-----------------\n");
+	printf("vernam %d\n", a);
+	printf("length = %d\n", len);
+	printf("%s\n", data);
+
+	printf("-----------------\n");
+	printf("key\n");
+	printf("%s\n", key);
+
+	printf("-----------------\n");
+	encoder_vernam(data, key, len, a);
+	printf("%s\n", data);
+
+	printf("-----------------\n");
+	decoder_vernam(data, key, len, a);
 	printf("%s\n", data);
       }
       break;
