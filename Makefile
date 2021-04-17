@@ -8,10 +8,12 @@ LIBS =
 LIBSPY = -lpython3.7m
 
 # ---------------------------------------------------------------------------- #
-test: test.c crypt.c
+c: test.c crypt.c
 	$(CC) $(CFLAGS) $(LIBS) -o test test.c
-crypt.so: py.c crypt.c
+
+py: py.c crypt.c
 	$(CC) -shared $(CFLAGS) $(CFLAGSPY) $(LIBSPY) -o crypt.so py.c
+
 clean:
 	rm -f *.so
 	rm -f test

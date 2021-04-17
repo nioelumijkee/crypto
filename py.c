@@ -2,69 +2,102 @@
  * python c extension example
  */
 #include <Python.h>
-#include <string.h>
+#include "crypt.c"
 
 // -------------------------------------------------------------------------- //
-// function modul
-static PyObject * message(PyObject *self, PyObject *args)
+static PyObject * m_encoder_caesar(PyObject *self, PyObject *args)
 {    
-  char *fromPython; 
-  char result[1024];
-  /* Python -> C                            */
-  if (! PyArg_Parse(args, "(s)", &fromPython))
+  PyObject *pyobj;
+  int a;
+  PyObject *returnobj = NULL;  /* null = ex */
+  char *buf;
+  long int size;
+
+  if (! PyArg_Parse(args, "(Oi)", &pyobj, &a))
     {
-      return NULL;
+      PyErr_SetString(PyExc_SystemError, "Error in arguments: bytes int");
     }
   else 
     {
-      strcpy(result, "Hello, ");
-      strcat(result, fromPython);
-      /* C -> Python                 */
-      return Py_BuildValue("s", result); 
+      if (PyBytes_Check(pyobj) == 1)
+	{
+	  size = PyBytes_Size(pyobj);
+	  buf = PyBytes_AsString(pyobj);
+	  encoder_caesar(buf, a, size);
+	  pyobj = PyBytes_FromStringAndSize(buf, size);
+	  returnobj = Py_BuildValue("O", pyobj); 
+	}
+      else
+	{
+	  PyErr_SetString(PyExc_SystemError, "Error in argument 1: bytes");
+	}
     }
+  return returnobj;
 }
 
 
 // -------------------------------------------------------------------------- //
-// function modul
-static PyObject * posthello(PyObject *self, PyObject *args)
-{ 
-  printf("Hello\n");
-  return Py_BuildValue("s", "ok");
+static PyObject * m_decoder_caesar(PyObject *self, PyObject *args)
+{    
+  PyObject *pyobj;
+  int a;
+  PyObject *returnobj = NULL;  /* null = ex */
+  char *buf;
+  long int size;
+
+  if (! PyArg_Parse(args, "(Oi)", &pyobj, &a))
+    {
+      PyErr_SetString(PyExc_SystemError, "Error in arguments: bytes int");
+    }
+  else 
+    {
+      if (PyBytes_Check(pyobj) == 1)
+	{
+	  size = PyBytes_Size(pyobj);
+	  buf = PyBytes_AsString(pyobj);
+	  decoder_caesar(buf, a, size);
+	  pyobj = PyBytes_FromStringAndSize(buf, size);
+	  returnobj = Py_BuildValue("O", pyobj); 
+	}
+      else
+	{
+	  PyErr_SetString(PyExc_SystemError, "Error in argument 1: bytes");
+	}
+    }
+  return returnobj;
 }
 
 
 // -------------------------------------------------------------------------- //
 // table registrtion
-static PyMethodDef hello_methods[] = 
+static PyMethodDef crypt_methods[] = 
   {
-    /* name     address  format         desc    */
-    {"message", message, METH_VARARGS, "add Hello"},
-    {"posthello", posthello, METH_VARARGS, "post"},
-    /* end */
+    /* name address format desc */
+    {"encoder_caesar", m_encoder_caesar, METH_VARARGS, "encoder caesar alg"},
+    {"decoder_caesar", m_decoder_caesar, METH_VARARGS, "decoder caesar alg"},
     {NULL, NULL, 0, NULL} 
   };
 
 
 // -------------------------------------------------------------------------- //
 // struct modul
-static struct PyModuleDef hellomodule = 
+static struct PyModuleDef cryptmodule = 
   {
     PyModuleDef_HEAD_INIT,
-    "hello",  // name
-    "mod doc",  // desc, maybe NULL 
-    -1, // size struct for everyone
-    hello_methods, // methods table
-    NULL, // m_slots
-    NULL, // m_traverse
-    NULL, // m_clear
-    NULL // m_free
+    "crypt",                   // name
+    "crypto lib by nuil kem",  // desc, maybe NULL 
+    -1,                        // size struct for everyone
+    crypt_methods,             // methods table
+    NULL,                      // m_slots
+    NULL,                      // m_traverse
+    NULL,                      // m_clear
+    NULL                       // m_free
   };
 
 
 // -------------------------------------------------------------------------- //
 // init
-PyMODINIT_FUNC PyInit_hello()
+PyMODINIT_FUNC PyInit_crypt()
 {
-  return PyModule_Create(&hellomodule);
+  return PyModule_Create(&cryptmodule);
 }

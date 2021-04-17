@@ -444,10 +444,10 @@ void gen_vernam(char *key, int len)
     }
 }
 
-void encoder_vernam(char *data,
-		    char *key,
-		    int len_data,
-		    int len_key)
+void deencoder_vernam(char *data,
+		      char *key,
+		      int len_data,
+		      int len_key)
 {
   int i,j;
   for (i=0; i<len_data; i++)
@@ -457,19 +457,6 @@ void encoder_vernam(char *data,
     }
 }
 
-
-void decoder_vernam(char *data,
-		    char *key,
-		    int len_data,
-		    int len_key)
-{
-  int i,j;
-  for (i=0; i<len_data; i++)
-    {
-      j = i % len_key;
-      data[i] = data[i] ^ key[j];
-    }
-}
 
 // -------------------------------------------------------------------------- //
 // hash

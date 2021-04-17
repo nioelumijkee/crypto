@@ -423,11 +423,11 @@ int main(int ac, char **av)
 	printf("%s\n", key);
 
 	printf("-----------------\n");
-	encoder_vernam(data, key, len, a);
+	deencoder_vernam(data, key, len, a);
 	printf("%s\n", data);
 
 	printf("-----------------\n");
-	decoder_vernam(data, key, len, a);
+	deencoder_vernam(data, key, len, a);
 	printf("%s\n", data);
       }
       break;
