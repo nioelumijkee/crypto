@@ -7,25 +7,25 @@
 // -------------------------------------------------------------------------- //
 static PyObject * m_encoder_caesar(PyObject *self, PyObject *args)
 {    
-  PyObject *pyobj;
+  PyObject *inobj;
   int a;
   PyObject *returnobj = NULL;  /* null = ex */
   char *buf;
   long int size;
 
-  if (! PyArg_Parse(args, "(Oi)", &pyobj, &a))
+  if (! PyArg_Parse(args, "(Oi)", &inobj, &a))
     {
       PyErr_SetString(PyExc_SystemError, "Error in arguments: bytes int");
     }
   else 
     {
-      if (PyBytes_Check(pyobj) == 1)
+      if (PyBytes_Check(inobj) == 1)
 	{
-	  size = PyBytes_Size(pyobj);
-	  buf = PyBytes_AsString(pyobj);
+	  size = PyBytes_Size(inobj);
+	  buf = PyBytes_AsString(inobj);
 	  encoder_caesar(buf, a, size);
-	  pyobj = PyBytes_FromStringAndSize(buf, size);
-	  returnobj = Py_BuildValue("O", pyobj); 
+	  inobj = PyBytes_FromStringAndSize(buf, size);
+	  returnobj = Py_BuildValue("O", inobj); 
 	}
       else
 	{
@@ -39,25 +39,25 @@ static PyObject * m_encoder_caesar(PyObject *self, PyObject *args)
 // -------------------------------------------------------------------------- //
 static PyObject * m_decoder_caesar(PyObject *self, PyObject *args)
 {    
-  PyObject *pyobj;
+  PyObject *inobj;
   int a;
   PyObject *returnobj = NULL;  /* null = ex */
   char *buf;
   long int size;
 
-  if (! PyArg_Parse(args, "(Oi)", &pyobj, &a))
+  if (! PyArg_Parse(args, "(Oi)", &inobj, &a))
     {
       PyErr_SetString(PyExc_SystemError, "Error in arguments: bytes int");
     }
   else 
     {
-      if (PyBytes_Check(pyobj) == 1)
+      if (PyBytes_Check(inobj) == 1)
 	{
-	  size = PyBytes_Size(pyobj);
-	  buf = PyBytes_AsString(pyobj);
+	  size = PyBytes_Size(inobj);
+	  buf = PyBytes_AsString(inobj);
 	  decoder_caesar(buf, a, size);
-	  pyobj = PyBytes_FromStringAndSize(buf, size);
-	  returnobj = Py_BuildValue("O", pyobj); 
+	  inobj = PyBytes_FromStringAndSize(buf, size);
+	  returnobj = Py_BuildValue("O", inobj); 
 	}
       else
 	{

@@ -29,20 +29,20 @@ void random_set(int i)
 
 // -------------------------------------------------------------------------- //
 // caesar
-void encoder_caesar(char *data, int a, int len)
+void encoder_caesar(char *data, int a, long int size)
 {
-  int i=0;
-  while (i < len)
+  long int i=0;
+  while (i < size)
     {
       data[i] = data[i] + a;
       i++;
     }
 }
 
-void decoder_caesar(char *data, int a, int len)
+void decoder_caesar(char *data, int a, long int size)
 {    
-  int i=0;
-  while (i < len)
+  long int i=0;
+  while (i < size)
     {
       data[i] = data[i] - a;
       i++;
@@ -51,20 +51,20 @@ void decoder_caesar(char *data, int a, int len)
 
 // -------------------------------------------------------------------------- //
 // affine
-void encoder_affine(char *data, int a, int b, int len)
+void encoder_affine(char *data, int a, int b, long int size)
 {
-  int i=0;
-  while (i < len)
+  long int i=0;
+  while (i < size)
     {
       data[i] = data[i] + (i*a) + b;
       i++;
     }
 }
 
-void decoder_affine(char *data, int a, int b, int len)
+void decoder_affine(char *data, int a, int b, long int size)
 {
-  int i=0;
-  while (i < len)
+  long int i=0;
+  while (i < size)
     {
       data[i] = data[i] - (i*a) - b;
       i++;
@@ -76,7 +76,7 @@ void decoder_affine(char *data, int a, int b, int len)
 void gen_couple(char *key,     // 256 
 		char *key_inv) // 256
 {
-  int i,j,k;
+  long int i,j,k;
   int find;
   i=0;
   while (i < 256)
@@ -103,10 +103,10 @@ void gen_couple(char *key,     // 256
 
 void deencoder_couple(char *data, 
 		      char *key, // 256 
-		      int len)
+		      long int size)
 {
-  int i;
-  for(i=0; i<len; i++)
+  long int i;
+  for(i=0; i<size; i++)
     {
       data[i] = key[(int)(unsigned char)data[i]];
     }
@@ -118,9 +118,9 @@ void encoder_swap(char *data,
 		  int a,     // only positive
 		  int b,     // only positive
 		  int step,  // only positive
-		  int len)
+		  long int size)
 {
-  int i,j,k;
+  long int i,j,k;
   char buf;
   if (a < 0)    a = 0 - a;
   if (b < 0)    b = 0 - b;
@@ -128,8 +128,8 @@ void encoder_swap(char *data,
   i = 0;
   while (i < step)
     {
-      j = (unsigned int)(((i*a)+b)) % len;
-      k = (unsigned int)i % len;
+      j = (unsigned int)(((i*a)+b)) % size;
+      k = (unsigned int)i % size;
       AF_SWAP(data[k], data[j], buf);
       i++;
     }
@@ -139,9 +139,9 @@ void decoder_swap(char *data,
 		  int a,     // only positive
 		  int b,     // only positive
 		  int step,  // only positive
-		  int len)
+		  long int size)
 {
-  int i,j,k;
+  long int i,j,k;
   char buf;
   if (a < 0)    a = 0 - a;
   if (b < 0)    b = 0 - b;
@@ -149,8 +149,8 @@ void decoder_swap(char *data,
   i = step-1;
   while (i >= 0)
     {
-      j = (unsigned int)(((i*a)+b)) % len;
-      k = (unsigned int)i % len;
+      j = (unsigned int)(((i*a)+b)) % size;
+      k = (unsigned int)i % size;
       AF_SWAP(data[k], data[j], buf);
       i--;
     }
@@ -158,10 +158,10 @@ void decoder_swap(char *data,
 
 // -------------------------------------------------------------------------- //
 // bits
-void gen_bits(char *key, int len)
+void gen_bits(char *key, long int size)
 {
-  int i;
-  for (i=0; i<len; i++)
+  long int i;
+  for (i=0; i<size; i++)
     {
       AF_RANDOM(seed);
       key[i] = seed;
@@ -170,17 +170,17 @@ void gen_bits(char *key, int len)
 
 void encoder_bits(char *data,
 		  char *key,
-		  int len_data,
-		  int len_key)
+		  long int size_data,
+		  long int size_key)
 {
-  int i,j;
+  long int i,j;
   unsigned char k;
   unsigned char res_hi;
   unsigned char res_lo;
   unsigned char buf;
-  for (i=0; i<len_data; i++)
+  for (i=0; i<size_data; i++)
     {
-      j = i % len_key;
+      j = i % size_key;
       k = (unsigned char)key[j] % 8;
       buf = data[i];
       if (k == 0)
@@ -200,17 +200,17 @@ void encoder_bits(char *data,
 
 void decoder_bits(char *data,
 		  char *key,
-		  int len_data,
-		  int len_key)
+		  long int size_data,
+		  long int size_key)
 {
-  int i,j;
+  long int i,j;
   unsigned char k;
   unsigned char res_hi;
   unsigned char res_lo;
   unsigned char buf;
-  for (i=0; i<len_data; i++)
+  for (i=0; i<size_data; i++)
     {
-      j = i % len_key;
+      j = i % size_key;
       k = (unsigned char)key[j] % 8;
       buf = data[i];
       if (k == 0)
@@ -232,7 +232,7 @@ void decoder_bits(char *data,
 void gen_key_polybius(char *key,     // 256 
 		      char *key_inv) // 256
 {
-  int i,j,k;
+  long int i,j,k;
   int find;
   i=0;
   while (i < 256)
@@ -259,7 +259,7 @@ void gen_key_polybius(char *key,     // 256
 
 void gen_word_polybius(char *word) // 16
 {
-  int i,j,k;
+  long int i,j,k;
   int find;
   i=0;
   while (i < 16)
@@ -283,17 +283,17 @@ void gen_word_polybius(char *word) // 16
     }
 }
 
-void encoder_polybius(int len,
+void encoder_polybius(long int size,
 		      char *wordx,    // 16 (only unique)
 		      char *wordy,    // 16 (only unique)
 		      char *key,      // 256
 		      char *input,    //
 		      char *output)   // input * 2
 {
-  int i,u;
+  long int i,u;
   unsigned char x,y;
   for (i=0, u=0; 
-       i<len; 
+       i<size; 
        i++, u += 2)
     {
       x = input[i];
@@ -306,17 +306,17 @@ void encoder_polybius(int len,
 }
 
 
-void decoder_polybius(int len,
+void decoder_polybius(long int size,
 		      char *wordx,   // 16 (only unique)
 		      char *wordy,   // 16 (only unique)
 		      char *key_inv, // 256
 		      char *input,   //
 		      char *output)  // input / 2
 {
-  int i,u,k;
+  long int i,u,k;
   unsigned char x,y;
   for (i=0, u=0; 
-       i<len; 
+       i<size; 
        i++, u += 2)
     {
       x = input[u];
@@ -350,21 +350,21 @@ void decoder_polybius(int len,
 // -------------------------------------------------------------------------- //
 // insert
 int encoder_insert_this(int a,     // 2 >= a 
-			int len,
+			long int size,
 			char *input,
 			char *output) // max = input * 2
 {
-  int i,j,k;
+  long int i,j,k;
   if (a < 1)    a = 1;
   i = 0;
   j = 0;
-  while (i < len)
+  while (i < size)
     {
       k = i % a;
       if (k == 0)
 	{
 	  AF_RANDOM(seed);
-	  k = seed % len;
+	  k = seed % size;
 	  /* output[j] = '.'; */
 	  output[j] = input[k];
 	  j++;
@@ -379,21 +379,21 @@ int encoder_insert_this(int a,     // 2 >= a
 }
 
 int encoder_insert_rnd(int a,        // 1 >= a 
-		       int len,
+		       long int size,
 		       char *input,
 		       char *output) // max = input * 2
 {
-  int i,j,k;
+  long int i,j,k;
   if (a < 1)    a = 1;
   i = 0;
   j = 0;
-  while (i < len)
+  while (i < size)
     {
       k = i % a;
       if (k == 0)
 	{
 	  AF_RANDOM(seed);
-	  k = seed % len;
+	  k = seed % size;
 	  output[j] = k;
 	  j++;
 	}
@@ -407,16 +407,16 @@ int encoder_insert_rnd(int a,        // 1 >= a
 }
 
 int decoder_insert(int a,        // 1 >= a 
-		   int len,
+		   long int size,
 		   char *input,
 		   char *output) // max = input * 2
 {
-  int i,j,k;
+  long int i,j,k;
   if (a < 1)    a = 1;
   a += 1;
   i = 0;
   j = 0;
-  while (i < len)
+  while (i < size)
     {
       k = i % a;
       if (k == 0)
@@ -434,10 +434,10 @@ int decoder_insert(int a,        // 1 >= a
 
 // -------------------------------------------------------------------------- //
 // vernam
-void gen_vernam(char *key, int len)
+void gen_vernam(char *key, long int size)
 {
-  int i;
-  for (i=0; i<len; i++)
+  long int i;
+  for (i=0; i<size; i++)
     {
       AF_RANDOM(seed);
       key[i] = seed;
@@ -446,13 +446,13 @@ void gen_vernam(char *key, int len)
 
 void deencoder_vernam(char *data,
 		      char *key,
-		      int len_data,
-		      int len_key)
+		      long int size_data,
+		      long int size_key)
 {
-  int i,j;
-  for (i=0; i<len_data; i++)
+  long int i,j;
+  for (i=0; i<size_data; i++)
     {
-      j = i % len_key;
+      j = i % size_key;
       data[i] = data[i] ^ key[j];
     }
 }
@@ -460,28 +460,28 @@ void deencoder_vernam(char *data,
 
 // -------------------------------------------------------------------------- //
 // hash
-void hash_r(int len,
-	    int hash_len, // pos
+void hash_r(long int size,
+	    long int size_hash, // pos
 	    char *input,
 	    char *output) // 8
 {
   int s; /* seed */
-  int i,j,k;
-  int len_1 = len - 1;
+  long int i,j,k;
+  long int size_1 = size - 1;
   s = 0;
-  for (i=0; i<hash_len; i++)
+  for (i=0; i<size_hash; i++)
     {
       // clip
       k = i;
-      if (k > len_1) k = len_1;
+      if (k > size_1) k = size_1;
 
       s = input[k] + i + s;
       j = 0;
-      while (j < len)
+      while (j < size)
 	{
 	  // clip
 	  k = j;
-	  if (k > len_1) k = len_1;
+	  if (k > size_1) k = size_1;
 
 	  s += input[k];
 	  AF_RANDOM(s);

@@ -3,42 +3,30 @@
 
 import crypt
 
-print('-'*80)
-src = b'abcdefg'
+# ---------------------------------------------------------------------------- #
+print('#'*80)
+src = b'abcdefg 0123456' # bytes
 print(src)
-print(type(src))
+
 src = crypt.encoder_caesar(src, 180)
+print('-'*20)
 print(src)
+
 src = crypt.decoder_caesar(src, 180)
+print('-'*20)
 print(src)
 
-
-print('-'*80)
-src = 'Абвгде'.encode('utf-8')
+# ---------------------------------------------------------------------------- #
+print('#'*80)
+src = 'abcdefg АБВГДЕИ 0123456' # utf-8
 print(src)
-print(type(src))
+src = src.encode('utf-8')
+
 src = crypt.encoder_caesar(src, 180)
+print('-'*20)
 print(src)
+
 src = crypt.decoder_caesar(src, 180)
-print(src)
-
-
-print('-'*80)
-src = 'asca'.encode('utf-8')
-print(src)
-print(type(src))
-src = crypt.encoder_caesar(src, 23)
-print(src)
-src = crypt.decoder_caesar(src, 23)
-print(src)
-
-
-print('-'*80)
-src = 'Ниоэлумиджке и Лисенок...'.encode('utf-8')
-print(src)
-print(type(src))
-src = crypt.encoder_caesar(src, 1)
-print(src)
-src = crypt.decoder_caesar(src, 1)
-print(src)
+print('-'*20)
+print(src.decode('utf-8'))
 

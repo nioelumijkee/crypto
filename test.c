@@ -27,8 +27,8 @@ enum
 // -------------------------------------------------------------------------- //
 int main(int ac, char **av)
 {
-  int i,j;
-  int len; /* length input data */
+  long int i,j;
+  long int len; /* size input data */
   int alg; /* algorythm */
   int err; /* error */
   int arg; /* count arguments */
@@ -248,16 +248,16 @@ int main(int ac, char **av)
     {
     case CAESAR:
       {
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("caesar %d\n", a);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	encoder_caesar(data, a, len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	decoder_caesar(data, a, len);
 	printf("%s\n", data);
       }
@@ -265,16 +265,16 @@ int main(int ac, char **av)
 
     case AFFINE:
       {
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("affine %d %d\n", a, b);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	encoder_affine(data, a, b, len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	decoder_affine(data, a, b, len);
 	printf("%s\n", data);
       }
@@ -284,23 +284,23 @@ int main(int ac, char **av)
       {
 	gen_couple(key, key_inv);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("couple\n");
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("key\n");
 	printf("%s\n", key);
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("key inv\n");
 	printf("%s\n", key_inv);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	deencoder_couple(data, key, len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	deencoder_couple(data, key_inv, len);
 	printf("%s\n", data);
       }
@@ -308,16 +308,16 @@ int main(int ac, char **av)
  
     case SWAP:
       {
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("swap %d %d %d\n", a, b, c);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	encoder_swap(data, a, b, c, len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	decoder_swap(data, a, b, c, len);
 	printf("%s\n", data);
       }
@@ -327,20 +327,20 @@ int main(int ac, char **av)
       {
 	gen_bits(key, a);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("bits %d\n", a);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("key\n");
 	printf("%s\n", key);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	encoder_bits(data, key, len, a);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	decoder_bits(data, key, len, a);
 	printf("%s\n", data);
       }
@@ -350,24 +350,24 @@ int main(int ac, char **av)
       {
 	gen_key_polybius(key, key_inv);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("polybius %s %s\n", wordx, wordy);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("key\n");
 	printf("%s\n", key);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("key inv\n");
 	printf("%s\n", key_inv);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	encoder_polybius(len, wordx, wordy, key, data, buf);
 	printf("%s\n", buf);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	decoder_polybius(len, wordx, wordy, key_inv, buf, data);
 	printf("%s\n", data);
       }
@@ -375,17 +375,17 @@ int main(int ac, char **av)
        
     case INSERT_T:
       {
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("insert_t %d\n", a);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	j = encoder_insert_this(a, len, data, buf);
-	printf("%d\n", j);
+	printf("%ld\n", j);
 	printf("%s\n", buf);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	decoder_insert(a, j, buf, data);
 	printf("%s\n", data);
       }
@@ -393,17 +393,17 @@ int main(int ac, char **av)
 
     case INSERT_R:
       {
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("insert_r %d\n", a);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	j = encoder_insert_rnd(a, len, data, buf);
-	printf("%d\n", j);
+	printf("%ld\n", j);
 	printf("%s\n", buf);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	decoder_insert(a, j, buf, data);
 	printf("%s\n", data);
       }
@@ -413,20 +413,20 @@ int main(int ac, char **av)
       {
 	gen_vernam(key, a);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("vernam %d\n", a);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("key\n");
 	printf("%s\n", key);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	deencoder_vernam(data, key, len, a);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	deencoder_vernam(data, key, len, a);
 	printf("%s\n", data);
       }
@@ -434,12 +434,12 @@ int main(int ac, char **av)
 
     case HASH_R:
       {
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	printf("hash_r %d\n", a);
-	printf("length = %d\n", len);
+	printf("size = %ld\n", len);
 	printf("%s\n", data);
 
-	printf("-----------------\n");
+	printf("- - - - - - - - - - - - - - - -\n");
 	hash_r(len, a, data, buf);
 	for(i=0; i<a; i++)
 	  printf("%.2hhX", buf[i]);

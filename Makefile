@@ -8,6 +8,8 @@ LIBS =
 LIBSPY = -lpython3.7m
 
 # ---------------------------------------------------------------------------- #
+all: c py
+
 c: test.c crypt.c
 	$(CC) $(CFLAGS) $(LIBS) -o test test.c
 
