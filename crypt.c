@@ -463,7 +463,7 @@ void deencoder_vernam(char *data,
 void hash_r(long int size,
 	    long int size_hash, // pos
 	    char *input,
-	    char *output) // 8
+	    char *output)
 {
   int s; /* seed */
   long int i,j,k;
@@ -483,7 +483,7 @@ void hash_r(long int size,
 	  k = j;
 	  if (k > size_1) k = size_1;
 
-	  s += input[k];
+	  s += input[k] + size_hash;
 	  AF_RANDOM(s);
 	  j++;
 	}
