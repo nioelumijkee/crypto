@@ -2,30 +2,149 @@
 
 
 // -------------------------------------------------------------------------- //
-// pseudo
-#define AF_RANDOM(SEED)         \
-  (SEED) = (SEED)*1103515245;	\
-  (SEED) += 12345;
-
+// swap
 #define AF_SWAP(X,Y,B)				\
   (B) = (X);					\
   (X) = (Y);					\
   (Y) = (B);
 
 
-static unsigned int seed;
 
 // -------------------------------------------------------------------------- //
 // random
-void random_init()
+static unsigned int  seed512;
+static unsigned int  seed512_count;
+static unsigned char seed512_key[512];
+
+
+// random with key 512
+// count shift 3
+#define AF_RANDOM512()				\
+  seed512 *= 1103515245;			\
+  seed512 += 12345;				\
+						\
+  seed512 *= seed512_key[seed512_count];	\
+  seed512_count++;				\
+  seed512_count = seed512_count % 512;		\
+						\
+  seed512 += seed512_key[seed512_count];	\
+  seed512_count += 2;				\
+  seed512_count = seed512_count % 512;		\
+						\
+
+
+void random512_init_by_time()
 {
-  seed = time(NULL);
+  seed512 = time(NULL);
+  seed512_count = 0;
 }
 
-void random_set(int i)
+
+void random512_init(int i)
 {
-  seed = i;
+  seed512 = i;
+  seed512_count = 0;
 }
+
+
+void random512_set_key(char *c)
+{
+  int i;
+  for (i=0; i<512; i++)
+    {
+      seed512_key[i] = c[i];
+    }
+}
+
+
+// -------------------------------------------------------------------------- //
+// make blend char's 256
+void gen_blend256(char *key) // 256 
+{
+  int i,k;
+  unsigned char j;
+  int find;
+  i=0;
+  while (i<256)
+    {
+      /* rnd */
+      AF_RANDOM512();
+      j = seed512;
+
+      find = 0;
+      for (k=0; k<i; k++)
+	{
+	  if (key[k] == j)
+	    {
+	      find = 1;
+	      break;
+	    }
+	}
+      if (find == 0)
+	{
+	  key[i] = j;
+	  i++;
+	}
+    }
+}
+
+
+// make invert key for blend char's 256
+void gen_blend256_invert(char *key,     // 256 
+			 char *key_inv) // 256
+{
+  int i;
+  unsigned char j;
+  for (i=0; i<256; i++)
+    {
+      j = key[i];
+      key_inv[j] = i;
+    }
+}
+
+
+// make blend char's 16
+void gen_blend16(char *key) // 16 
+{
+  int i,k;
+  unsigned char j;
+  int find;
+  i=0;
+  while (i<16)
+    {
+      /* rnd */
+      AF_RANDOM512();
+      j = seed512;
+
+      find = 0;
+      for (k=0; k<i; k++)
+	{
+	  if (key[k] == j)
+	    {
+	      find = 1;
+	      break;
+	    }
+	}
+      if (find == 0)
+	{
+	  key[i] = j;
+	  i++;
+	}
+    }
+}
+
+
+// make key with various size
+void gen_var(char *key, long int size)
+{
+  long int i;
+  for (i=0; i<size; i++)
+    {
+      AF_RANDOM512();
+      key[i] = seed512;
+    }
+}
+
 
 // -------------------------------------------------------------------------- //
 // caesar
@@ -73,34 +192,8 @@ void decoder_affine(char *data, int a, int b, long int size)
 
 // -------------------------------------------------------------------------- //
 // couple
-void gen_couple(char *key,     // 256 
-		char *key_inv) // 256
-{
-  long int i,j,k;
-  int find;
-  i=0;
-  while (i < 256)
-    {
-      AF_RANDOM(seed);
-      j = seed % 256;
-      find = 0;
-      for (k=0; k<i; k++)
-	{
-	  if (key[k] == j)
-	    {
-	      find = 1;
-	      break;
-	    }
-	}
-      if (find == 0)
-	{
-	  key[i] = j;
-	  key_inv[j] = i;
-	  i++;
-	}
-    }
-}
-
+// for encode - key
+// for decode - key_inv
 void deencoder_couple(char *data, 
 		      char *key, // 256 
 		      long int size)
@@ -158,16 +251,6 @@ void decoder_swap(char *data,
 
 // -------------------------------------------------------------------------- //
 // bits
-void gen_bits(char *key, long int size)
-{
-  long int i;
-  for (i=0; i<size; i++)
-    {
-      AF_RANDOM(seed);
-      key[i] = seed;
-    }
-}
-
 void encoder_bits(char *data,
 		  char *key,
 		  long int size_data,
@@ -229,60 +312,6 @@ void decoder_bits(char *data,
 
 // -------------------------------------------------------------------------- //
 // polybius
-void gen_key_polybius(char *key,     // 256 
-		      char *key_inv) // 256
-{
-  long int i,j,k;
-  int find;
-  i=0;
-  while (i < 256)
-    {
-      AF_RANDOM(seed);
-      j = seed % 256;
-      find = 0;
-      for (k=0; k<i; k++)
-	{
-	  if (key[k] == j)
-	    {
-	      find = 1;
-	      break;
-	    }
-	}
-      if (find == 0)
-	{
-	  key[i] = j;
-	  key_inv[j] = i;
-	  i++;
-	}
-    }
-}
-
-void gen_word_polybius(char *word) // 16
-{
-  long int i,j,k;
-  int find;
-  i=0;
-  while (i < 16)
-    {
-      AF_RANDOM(seed);
-      j = seed % 256;
-      find = 0;
-      for (k=0; k<i; k++)
-	{
-	  if (word[k] == j)
-	    {
-	      find = 1;
-	      break;
-	    }
-	}
-      if (find == 0)
-	{
-	  word[i] = j;
-	  i++;
-	}
-    }
-}
-
 void encoder_polybius(long int size,
 		      char *wordx,    // 16 (only unique)
 		      char *wordy,    // 16 (only unique)
@@ -349,7 +378,7 @@ void decoder_polybius(long int size,
 
 // -------------------------------------------------------------------------- //
 // insert
-int encoder_insert_this(int a,     // 2 >= a 
+int encoder_insert_this(int a, // 1 >= a 
 			long int size,
 			char *input,
 			char *output) // max = input * 2
@@ -363,8 +392,8 @@ int encoder_insert_this(int a,     // 2 >= a
       k = i % a;
       if (k == 0)
 	{
-	  AF_RANDOM(seed);
-	  k = seed % size;
+	  AF_RANDOM512();
+	  k = seed512 % size;
 	  /* output[j] = '.'; */
 	  output[j] = input[k];
 	  j++;
@@ -392,15 +421,13 @@ int encoder_insert_rnd(int a,        // 1 >= a
       k = i % a;
       if (k == 0)
 	{
-	  AF_RANDOM(seed);
-	  k = seed % size;
-	  output[j] = k;
+	  AF_RANDOM512();
+	  output[j] = seed512;
 	  j++;
 	}
 
       output[j] = input[i];
       j++;
-
       i++;
     }
   return(j);
@@ -426,7 +453,6 @@ int decoder_insert(int a,        // 1 >= a
 
       output[j] = input[i];
       j++;
-
       i++;
     }
   return(j);
@@ -434,16 +460,6 @@ int decoder_insert(int a,        // 1 >= a
 
 // -------------------------------------------------------------------------- //
 // vernam
-void gen_vernam(char *key, long int size)
-{
-  long int i;
-  for (i=0; i<size; i++)
-    {
-      AF_RANDOM(seed);
-      key[i] = seed;
-    }
-}
-
 void deencoder_vernam(char *data,
 		      char *key,
 		      long int size_data,
@@ -457,36 +473,3 @@ void deencoder_vernam(char *data,
     }
 }
 
-
-// -------------------------------------------------------------------------- //
-// hash
-void hash_r(long int size,
-	    long int size_hash, // pos
-	    char *input,
-	    char *output)
-{
-  int s; /* seed */
-  long int i,j,k;
-  long int size_1 = size - 1;
-  s = 0;
-  for (i=0; i<size_hash; i++)
-    {
-      // clip
-      k = i;
-      if (k > size_1) k = size_1;
-
-      s = input[k] + i + s;
-      j = 0;
-      while (j < size)
-	{
-	  // clip
-	  k = j;
-	  if (k > size_1) k = size_1;
-
-	  s += input[k] + size_hash;
-	  AF_RANDOM(s);
-	  j++;
-	}
-      output[i] = s;
-    }
-}
