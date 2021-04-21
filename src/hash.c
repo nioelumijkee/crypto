@@ -16,7 +16,6 @@ void hash_r(long int size,
 {
   int s; /* seed */
   long int i,j,k;
-  long int size_1 = size - 1;
 
   // init seed
   s = 0;

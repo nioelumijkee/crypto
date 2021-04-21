@@ -7,15 +7,16 @@ CFLAGSPY += -I"$(PYINC)" -L"$(PYLIB)"
 LIBS =
 LIBSPY = -lpython3.7m
 
+CSRCDIR = ./src
+PYSRCDIR = ./py
+
+
+
 # ---------------------------------------------------------------------------- #
-all: c py
+all: py
 
-c: test.c crypt.c
-	$(CC) $(CFLAGS) $(LIBS) -o test test.c
-
-py: py.c crypt.c
-	$(CC) -shared $(CFLAGS) $(CFLAGSPY) $(LIBSPY) -o crypt.so py.c
+py: $(CSRCDIR)/py.c  $(CSRCDIR)/crypt.c  $(CSRCDIR)/hash.c
+	$(CC) -shared $(CFLAGS) $(CFLAGSPY) $(LIBSPY) -o ncryptpy.so $(CSRCDIR)/py.c
 
 clean:
 	rm -f *.so
-	rm -f test

@@ -210,16 +210,16 @@ void deencoder_couple(char *data,
 void encoder_swap(char *data,
 		  int a,     // only positive
 		  int b,     // only positive
-		  int step,  // only positive
+		  int c,     // only positive
 		  long int size)
 {
   long int i,j,k;
   char buf;
   if (a < 0)    a = 0 - a;
   if (b < 0)    b = 0 - b;
-  if (step < 0) step = 0 - step;
+  if (c < 0)    c = 0 - c;
   i = 0;
-  while (i < step)
+  while (i < c)
     {
       j = (unsigned int)(((i*a)+b)) % size;
       k = (unsigned int)i % size;
@@ -231,15 +231,15 @@ void encoder_swap(char *data,
 void decoder_swap(char *data,
 		  int a,     // only positive
 		  int b,     // only positive
-		  int step,  // only positive
+		  int c,     // only positive
 		  long int size)
 {
   long int i,j,k;
   char buf;
   if (a < 0)    a = 0 - a;
   if (b < 0)    b = 0 - b;
-  if (step < 0) step = 0 - step;
-  i = step-1;
+  if (c < 0)    c = 0 - c;
+  i = c-1;
   while (i >= 0)
     {
       j = (unsigned int)(((i*a)+b)) % size;
@@ -436,7 +436,7 @@ int encoder_insert_rnd(int a,        // 1 >= a
 int decoder_insert(int a,        // 1 >= a 
 		   long int size,
 		   char *input,
-		   char *output) // max = input * 2
+		   char *output) // max = input / 2
 {
   long int i,j,k;
   if (a < 1)    a = 1;
