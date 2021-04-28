@@ -20,11 +20,10 @@ def set_rnd_by_time():
 # ---------------------------------------------------------------------------- #
 # make random bytes
 def get_rnd(size):
-    k = ''
+    l = []
     for i in range(size):
         r = seed.random()
-        r = (int(r*1000000) % 256)
-        r = chr(r)
-        k = "%s%s" % (k,r)
-        # k = k+ord(r)
-    return k.encode('utf-8')[0:size]
+        r = int(r*100000000) % 256
+        l.append(r)
+    b = bytearray(l)
+    return (b)
