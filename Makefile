@@ -8,15 +8,20 @@ LIBS =
 LIBSPY = -lpython3.7m
 
 CSRCDIR = ./src
-PYSRCDIR = ./py
 
+SRC = \
+$(CSRCDIR)/ncp.c \
+$(CSRCDIR)/hash.c \
+$(CSRCDIR)/random.c \
+$(CSRCDIR)/add.c \
+$(CSRCDIR)/crypt.c
 
 
 # ---------------------------------------------------------------------------- #
-all: py
+all: ncp
 
-py: $(CSRCDIR)/py.c  $(CSRCDIR)/crypt.c  $(CSRCDIR)/hash.c
-	$(CC) -shared $(CFLAGS) $(CFLAGSPY) $(LIBSPY) -o ncryptpy.so $(CSRCDIR)/py.c
+ncp: $(SRC)
+	$(CC) -shared $(CFLAGS) $(CFLAGSPY) $(LIBSPY) -o ncp.so $(CSRCDIR)/ncp.c
 
 clean:
 	rm -f *.so

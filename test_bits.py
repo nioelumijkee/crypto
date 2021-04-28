@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# test crypt.so
+# test
 
 import sys
 import ncp
@@ -11,18 +11,24 @@ src = ''
 
 try:
     src = sys.argv[1]
-    size = int(sys.argv[2])
 except:
-    print('Usage: <string> <size>')
+    print('Usage: <string>')
     exit()
 
-print('src  = ', src)
-print('size = ', size)
-src = src.encode('utf-8')
+print('-'*80)
+print(src)
 
 # ---------------------------------------------------------------------------- #
-# hash_r
-h = ncp.hash_r(src, size)
-prn.print_bytes(h, 16)
+src = src.encode('utf-8')
 
+key = ncp.gen1024()
 
+ncp.encoder_bits(src, key)
+prn.print_bytes(src, 16)
+
+ncp.decoder_bits(src, key)
+prn.print_bytes(src, 16)
+
+usrc = src.decode('utf-8')
+print('-'*80)
+print(usrc)
