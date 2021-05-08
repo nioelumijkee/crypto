@@ -12,7 +12,6 @@ CSRCDIR = ./src
 SRC = \
 $(CSRCDIR)/ncp.c \
 $(CSRCDIR)/hash.c \
-$(CSRCDIR)/random.c \
 $(CSRCDIR)/add.c \
 $(CSRCDIR)/crypt.c
 

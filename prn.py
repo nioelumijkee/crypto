@@ -1,51 +1,80 @@
 #!/usr/bin/env python3
-# print bytes formated
-
-# ---------------------------------------------------------------------------- #
-# colors
-col_red     = '\x1b[31m'
-col_green   = '\x1b[32m'
-col_yellow  = '\x1b[33m'
-col_blue    = '\x1b[34m'
-col_off     = '\x1b[0m'
 
 # ---------------------------------------------------------------------------- #
 # arg: bytes width
 # print size, random
-def print_bytes(r,w):
+def print_bytes(data, width):
 
     print('-'*80)
-    # print(r)
+    print('size: %d' % (len(data)))
 
-    # print('.'*80)
-    for i in range(len(r)): # --------------------------------------------vvv
-        s = r[i]
+    j = 0
 
-        if s >= 33 and s <= 126:
-            s = "%s%s " % (col_off,chr(s))
-            # s = "%s " % (chr(s))
-            print(s, end=' ')
-        else:
-            s = "%s. " % (col_blue)
-            # s = "� "
-            print(s, end=' ')
+    size = len(data)
 
-        if i % w == w-1:
-            print("")
-    if i % w != w-1:
-        print("")    # ---------------------------------------------------^^^
-    print(col_off, end=' ')
+    p0 = width * 2
+    p1 = size % width
+    if p1 == 0:
+        p1 = width
+    p1 += width
+    p1 = size - p1
 
+    # symbols
     print('.'*80)
-    for i in range(len(r)): # --------------------------------------------vvv
-        s = r[i]
-        s = ("%s" % (hex(s)[2:])).upper()
-        if len(s) == 1:
-            s = '0' + s
-        print(s , end=' ')
-        if i % w == w-1:
-            print("")
-    if i % w != w-1:
-        print("")    # ---------------------------------------------------^^^
+    skip = 0
+    for i in range(size):
+        s = data[i]
+
+        if i < p0:
+            view = 1
+        elif i >= p1:
+            view = 1
+        else:
+            view = 0
+
+        if i >= p0 and i < p1 and skip == 0:
+            skip = 1
+            print('---')
+
+        if view:
+            if s >= 33 and s <= 126:
+                s = "%s " % (chr(s))
+                print(s, end=' ')
+            else:
+                s = "  "
+                print(s, end=' ')
+
+            if i % width == width - 1:
+                print("")
+
+    if i % width != width - 1:
+        print("")
 
 
+    # numbers hex
+    print('.'*80)
+    skip = 0
+    for i in range(size):
+        s = data[i]
+
+        if i < p0:
+            view = 1
+        elif i >= p1:
+            view = 1
+        else:
+            view = 0
+
+        if i >= p0 and i < p1 and skip == 0:
+            skip = 1
+            print('---')
+
+        if view:
+            s = ("%s" % (hex(s)[2:])).upper()
+            if len(s) == 1:
+                s = '0' + s
+            print(s , end=' ')
+            if i % width == width - 1:
+                print("")
+
+    if i % width != width - 1:
+        print("")

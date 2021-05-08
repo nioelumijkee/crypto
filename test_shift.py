@@ -1,34 +1,26 @@
 #!/usr/bin/env python3
-# test
 
-import sys
 import ncp
 import prn
+import sys
 
 # ---------------------------------------------------------------------------- #
-# parse arguments
 src = ''
-a = 1
+st = 0
+le = 0
+sh = 0
 
 try:
     src = sys.argv[1]
-    a = int(sys.argv[2])
+    src = src.encode('utf-8')
+    st  = int(sys.argv[2])
+    le  = int(sys.argv[3])
+    sh  = int(sys.argv[4])
 except:
-    print('Usage: <string> <a>')
+    print('usage: <str> <start> <len> <shift>')
     exit()
 
-print('-'*80)
-print(src)
-
 # ---------------------------------------------------------------------------- #
-src = src.encode('utf-8')
-
-ncp.encoder_caesar(src, a)
 prn.print_bytes(src, 16)
-
-ncp.decoder_caesar(src, a)
+ncp.shift(src, st, le, sh)
 prn.print_bytes(src, 16)
-
-usrc = src.decode('utf-8')
-print('-'*80)
-print(usrc)

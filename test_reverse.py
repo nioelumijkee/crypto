@@ -1,36 +1,24 @@
 #!/usr/bin/env python3
-# test
 
-import sys
 import ncp
 import prn
+import sys
 
 # ---------------------------------------------------------------------------- #
-# parse arguments
 src = ''
+st = 0
+le = 0
 
 try:
     src = sys.argv[1]
+    src = src.encode('utf-8')
+    st  = int(sys.argv[2])
+    le  = int(sys.argv[3])
 except:
-    print('Usage: <string>')
+    print('usage: <str> <start> <len>')
     exit()
 
-print('-'*80)
-print(src)
-
 # ---------------------------------------------------------------------------- #
-src = src.encode('utf-8')
-
-key = ncp.gen_blend256()
-
-ncp.deencoder_couple(src, key)
 prn.print_bytes(src, 16)
-
-key = ncp.gen_blend256_invert(key)
-
-ncp.deencoder_couple(src, key)
+ncp.reverse(src, st, le)
 prn.print_bytes(src, 16)
-
-usrc = src.decode('utf-8')
-print('-'*80)
-print(usrc)

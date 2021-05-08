@@ -1,6 +1,3 @@
-#include <time.h>
-
-
 // -------------------------------------------------------------------------- //
 // pseudo
 #define AF_RANDOM(SEED)		\
@@ -9,13 +6,13 @@
 
 // -------------------------------------------------------------------------- //
 // hash
-void hash_r(long int size,
-	    long int size_hash, // pos
+void hash_r(int size,
+	    int size_hash,
 	    char *input,
 	    char *output)
 {
   int s; /* seed */
-  long int i,j,k;
+  int i,j,k;
 
   // init seed
   s = 0;

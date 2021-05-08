@@ -1,3 +1,3 @@
 ## ncp
-### Simply extansion for python with cryptographic functions.
+### Simply cryptographic library.
 
