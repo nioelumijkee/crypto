@@ -6,7 +6,7 @@
 
 // -------------------------------------------------------------------------- //
 // hash
-void hash_r(int size,
+void hash_r(int size_data,
 	    int size_hash,
 	    char *input,
 	    char *output)
@@ -16,7 +16,7 @@ void hash_r(int size,
 
   // init seed
   s = 0;
-  for (i=0; i<size; i++)
+  for (i=0; i<size_data; i++)
     {
       s += input[i];
       AF_RANDOM(s);
@@ -27,14 +27,14 @@ void hash_r(int size,
     {
       // clip
       k = i;
-      k = k % size;
+      k = k % size_data;
       s = input[k] + i + s;
       j = 0;
-      while (j < size)
+      while (j < size_data)
 	{
 	  // clip
 	  k = j;
-	  k = k % size;
+	  k = k % size_data;
 	  s += input[k] + size_hash;
 	  AF_RANDOM(s);
 	  j++;

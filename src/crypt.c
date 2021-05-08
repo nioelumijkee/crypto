@@ -2,10 +2,16 @@
 // bits
 void encoder_bits(char *data,
 		  char *key,
+		  int size_data,
 		  int size_key,
 		  int start,
 		  int len)
 {
+  if (size_data < 1 || size_key < 1)
+    {
+      return;
+    }
+
   int i,j;
   char k;
   unsigned char res_hi;
@@ -38,10 +44,16 @@ void encoder_bits(char *data,
 // -------------------------------------------------------------------------- //
 void decoder_bits(char *data,
 		  char *key,
+		  int size_data,
 		  int size_key,
 		  int start,
 		  int len)
 {
+  if (size_data < 1 || size_key < 1)
+    {
+      return;
+    }
+
   int i,j;
   char k;
   unsigned char res_hi;

@@ -30,16 +30,36 @@ void reverse(char *data,
 // -------------------------------------------------------------------------- //
 // shift
 void shift(char *data, 
+	   int size, 
 	   int start, 
 	   int len, 
 	   int shift)
 {
-  int end = start + len;
   int sh = shift;
-  sh = sh % len;
+
+  if (size < 2)
+    {
+      return;
+    }
+
+  if (len < 2)
+    {
+      return;
+    }
+
   if (sh < 0)
     {
-      sh = len + sh;
+      sh = 0 - sh;
+      sh = sh % len;
+      sh = len - sh;
+    }
+  else if (sh == 0)
+    {
+      return;
+    }
+  else
+    {
+      sh = sh % len;
     }
 
   int i, p1, p2, m;
@@ -80,7 +100,6 @@ void shift(char *data,
       p2 = len - i - 1 + a_s;
       AF_SWAP(data[p1], data[p2], buf);
     }
-  if(end) {} // dis
 }
 
 // -------------------------------------------------------------------------- //
@@ -90,6 +109,7 @@ void validate_ssl(int size,
 		  int *len)
 {
   int end;
+
 
   // start 0 ... size-1
   if (*start < 0)
