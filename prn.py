@@ -8,8 +8,6 @@ def print_bytes(data, width):
     print('-'*80)
     print('size: %d' % (len(data)))
 
-    j = 0
-
     size = len(data)
 
     p0 = width * 2
@@ -78,3 +76,19 @@ def print_bytes(data, width):
 
     if i % width != width - 1:
         print("")
+
+# ---------------------------------------------------------------------------- #
+# arg: bytes
+# print hex
+def print_bytes_hex(data):
+
+    size = len(data)
+
+    # numbers hex
+    for i in range(size):
+        s = data[i]
+        s = ("%s" % (hex(s)[2:])).upper()
+        if len(s) == 1:
+            s = '0' + s
+        print(s , end='')
+    print('')
