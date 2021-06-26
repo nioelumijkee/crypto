@@ -16,24 +16,38 @@ def decode(filename_in, filename_out, word):
         print('error open files')
         exit()
 
+
+
+    # 1
     data = fi.read()
-    
+    data_out = b''
     size_data = len(data)
     size_key = 64
-    step_sh = 64
-    sh = -32
-
-    key = ncp.hash_r(word.encode(), 64)
-
+    key = ncp.hash_r(word.encode(), size_key)
     j = 0
     while j < size_data:
         k = j + size_key
         buf = data[j:k]
         ncp.reverse(buf, 0, 0)
-        # ncp.shift(buf, 0, 0, sh)
         ncp.decoder_bits(buf, key, 0, 0)
-        fo.write(buf)
-        j += step_sh
+        data_out = data_out + buf
+        j += size_key
 
+    # 2
+    data = data_out
+    data_out = b''
+    size_data = len(data)
+    size_key = 128
+    key = ncp.hash_r(word.encode(), size_key)
+    j = 0
+    while j < size_data:
+        k = j + size_key
+        buf = data[j:k]
+        ncp.reverse(buf, 0, 0)
+        ncp.decoder_bits(buf, key, 0, 0)
+        data_out = data_out + buf
+        j += size_key
+
+    fo.write(data_out)
     fi.close()
     fo.close()
